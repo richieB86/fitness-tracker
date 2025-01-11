@@ -36,6 +36,8 @@
         <button type="submit">Add Entry</button>
       </form>
 
+      <button class="back-to-menu">Zurück zum Menü</button>
+
       <div id="log">
         <h3>Activity Log</h3>
         <ul id="log-list"></ul>
@@ -54,9 +56,30 @@
         <button type="submit">Add Training</button>
       </form>
 
+      <button class="back-to-menu">Zurück zum Menü</button>
+
       <div id="training-log">
         <h3>Training Log</h3>
         <ul id="training-log-list"></ul>
+      </div>
+    </section>
+
+    <section id="progress" style="display: none;">
+      <h2>Fortschritt anzeigen</h2>
+      <label for="filter-date">Datum filtern:</label>
+      <input type="date" id="filter-date">
+
+      <label for="filter-exercise">Übung filtern:</label>
+      <input type="text" id="filter-exercise" placeholder="e.g., Running">
+
+      <button id="apply-filter">Filter anwenden</button>
+      <button id="clear-filter">Filter zurücksetzen</button>
+
+      <button class="back-to-menu">Zurück zum Menü</button>
+
+      <div id="progress-log">
+        <h3>Progress Log</h3>
+        <ul id="progress-log-list"></ul>
       </div>
     </section>
   </main>
@@ -69,6 +92,7 @@
     const menu = document.getElementById('menu');
     const trackerSection = document.getElementById('tracker');
     const trainingSection = document.getElementById('training');
+    const progressSection = document.getElementById('progress');
 
     document.getElementById('new-exercise').addEventListener('click', () => {
       menu.style.display = 'none';
@@ -78,6 +102,21 @@
     document.getElementById('new-training').addEventListener('click', () => {
       menu.style.display = 'none';
       trainingSection.style.display = 'block';
+    });
+
+    document.getElementById('view-progress').addEventListener('click', () => {
+      menu.style.display = 'none';
+      progressSection.style.display = 'block';
+      updateProgressLog();
+    });
+
+    document.querySelectorAll('.back-to-menu').forEach(button => {
+      button.addEventListener('click', () => {
+        trackerSection.style.display = 'none';
+        trainingSection.style.display = 'none';
+        progressSection.style.display = 'none';
+        menu.style.display = 'block';
+      });
     });
 
     document.getElementById('fitness-form').addEventListener('submit', function (e) {
@@ -94,10 +133,9 @@
         listItem.textContent = `${date}: ${exercise} for ${duration} minutes`;
         logList.appendChild(listItem);
 
-        // Reset the form
         document.getElementById('fitness-form').reset();
       } else {
-        alert('Please fill in all fields.');
+        alert('Bitte alle Felder ausfüllen.');
       }
     });
 
@@ -114,12 +152,44 @@
         listItem.textContent = `${trainingDate}: ${trainingName}`;
         trainingLogList.appendChild(listItem);
 
-        // Reset the form
         document.getElementById('training-form').reset();
       } else {
-        alert('Please fill in all fields.');
+        alert('Bitte alle Felder ausfüllen.');
       }
     });
+
+    document.getElementById('apply-filter').addEventListener('click', function () {
+      const filterDate = document.getElementById('filter-date').value;
+      const filterExercise = document.getElementById('filter-exercise').value.toLowerCase();
+      updateProgressLog(filterDate, filterExercise);
+    });
+
+    document.getElementById('clear-filter').addEventListener('click', function () {
+      document.getElementById('filter-date').value = '';
+      document.getElementById('filter-exercise').value = '';
+      updateProgressLog();
+    });
+
+    function updateProgressLog(filterDate = '', filterExercise = '') {
+      const logList = document.getElementById('log-list');
+      const progressLogList = document.getElementById('progress-log-list');
+
+      progressLogList.innerHTML = '';
+
+      Array.from(logList.children).forEach(item => {
+        const [date, details] = item.textContent.split(': ');
+        const [exercise] = details.split(' for ');
+
+        if (
+          (filterDate === '' || date === filterDate) &&
+          (filterExercise === '' || exercise.toLowerCase().includes(filterExercise))
+        ) {
+          const listItem = document.createElement('li');
+          listItem.textContent = item.textContent;
+          progressLogList.appendChild(listItem);
+        }
+      });
+    }
   </script>
 </body>
 </html>
