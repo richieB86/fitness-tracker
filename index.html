@@ -14,7 +14,14 @@
   </header>
 
   <main>
-    <section id="tracker">
+    <section id="menu">
+      <h2>Menu</h2>
+      <button id="new-exercise">Neue Übung anlegen</button>
+      <button id="new-training">Neues Training anlegen</button>
+      <button id="view-progress">Fortschritt anzeigen</button>
+    </section>
+
+    <section id="tracker" style="display: none;">
       <h2>Track your progress</h2>
       <form id="fitness-form">
         <label for="exercise">Exercise:</label>
@@ -34,6 +41,24 @@
         <ul id="log-list"></ul>
       </div>
     </section>
+
+    <section id="training" style="display: none;">
+      <h2>New Training</h2>
+      <form id="training-form">
+        <label for="training-date">Date:</label>
+        <input type="date" id="training-date" name="training-date">
+
+        <label for="training-name">Training Name:</label>
+        <input type="text" id="training-name" name="training-name" placeholder="e.g., Cardio">
+
+        <button type="submit">Add Training</button>
+      </form>
+
+      <div id="training-log">
+        <h3>Training Log</h3>
+        <ul id="training-log-list"></ul>
+      </div>
+    </section>
   </main>
 
   <footer>
@@ -41,6 +66,20 @@
   </footer>
 
   <script>
+    const menu = document.getElementById('menu');
+    const trackerSection = document.getElementById('tracker');
+    const trainingSection = document.getElementById('training');
+
+    document.getElementById('new-exercise').addEventListener('click', () => {
+      menu.style.display = 'none';
+      trackerSection.style.display = 'block';
+    });
+
+    document.getElementById('new-training').addEventListener('click', () => {
+      menu.style.display = 'none';
+      trainingSection.style.display = 'block';
+    });
+
     document.getElementById('fitness-form').addEventListener('submit', function (e) {
       e.preventDefault();
 
@@ -57,6 +96,26 @@
 
         // Reset the form
         document.getElementById('fitness-form').reset();
+      } else {
+        alert('Please fill in all fields.');
+      }
+    });
+
+    document.getElementById('training-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const trainingDate = document.getElementById('training-date').value;
+      const trainingName = document.getElementById('training-name').value;
+
+      if (trainingDate && trainingName) {
+        const trainingLogList = document.getElementById('training-log-list');
+        const listItem = document.createElement('li');
+
+        listItem.textContent = `${trainingDate}: ${trainingName}`;
+        trainingLogList.appendChild(listItem);
+
+        // Reset the form
+        document.getElementById('training-form').reset();
       } else {
         alert('Please fill in all fields.');
       }
